@@ -1,1 +1,7 @@
 project_id = "ccmkqctuzvasuoazswsl"
+
+[functions.research-chat]
+verify_jwt = false
+
+[functions.lovable-chat]
+verify_jwt = false

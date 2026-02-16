@@ -1,9 +1,16 @@
-import { useEffect, useRef } from "react";
-import { Brain, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Sparkles, Globe, TrendingUp, Lightbulb, Code } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
 import { ChatInput } from "@/components/research/ChatInput";
+
+const SUGGESTIONS = [
+  { icon: TrendingUp, label: "Market analysis", prompt: "Analyze the current state of the AI market in 2026 — key players, trends, and opportunities" },
+  { icon: Code, label: "Tech comparison", prompt: "Compare React, Vue, and Svelte in 2026 — performance, ecosystem, and developer experience" },
+  { icon: Globe, label: "Industry research", prompt: "What are the biggest trends in renewable energy and climate tech right now?" },
+  { icon: Lightbulb, label: "Strategy advice", prompt: "What are the best practices for launching a SaaS product in a competitive market?" },
+];
 
 export default function ResearchAgent() {
   const {
@@ -19,7 +26,9 @@ export default function ResearchAgent() {
     deleteConversation,
   } = useConversation();
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isHome = messages.length === 0 && !activeConversationId;
 
   useEffect(() => { loadConversations(); }, [loadConversations]);
 
@@ -28,81 +37,84 @@ export default function ResearchAgent() {
   }, [messages]);
 
   return (
-    <div className="h-screen flex bg-background">
+    <div className="h-screen flex flex-col bg-background relative">
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
-        onSelect={(id) => loadMessages(id)}
-        onNew={newChat}
+        onSelect={(id) => { loadMessages(id); setSidebarOpen(false); }}
+        onNew={() => { newChat(); setSidebarOpen(false); }}
         onDelete={deleteConversation}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="border-b px-6 py-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Brain className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-sm font-semibold">Research Agent</h1>
-            <p className="text-xs text-muted-foreground">AI-powered research & knowledge assistant</p>
-          </div>
-        </header>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto">
-          {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                <Sparkles className="w-8 h-8 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold mb-2">What would you like to research?</h2>
-              <p className="text-muted-foreground max-w-md text-sm">
-                Ask any question and I'll analyze, summarize, and provide actionable insights. 
-                Try topics like market trends, technology comparisons, or industry analysis.
-              </p>
-              <div className="grid grid-cols-2 gap-2 mt-6 max-w-lg">
-                {[
-                  "Compare React vs Vue in 2026",
-                  "Latest AI regulation trends",
-                  "Best practices for startup fundraising",
-                  "Summarize key blockchain developments",
-                ].map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => sendMessage(q)}
-                    className="text-xs text-left px-3 py-2 rounded-lg border hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-                  >
-                    {q}
-                  </button>
-                ))}
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-64" : ""}`}>
+        {isHome ? (
+          /* ===== HOME SCREEN (ChatGPT-style) ===== */
+          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
+            {/* Logo / Brand */}
+            <div className="mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20">
+                <Sparkles className="w-7 h-7 text-primary-foreground" />
               </div>
             </div>
-          ) : (
-            <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
-              {messages.map((msg, i) => (
-                <ChatMessage key={i} message={msg} />
+
+            <h1 className="text-2xl font-semibold mb-1 text-foreground">
+              What can I help you research?
+            </h1>
+            <p className="text-muted-foreground text-sm mb-8">
+              AI-powered research, analysis, and insights
+            </p>
+
+            {/* Input bar */}
+            <div className="w-full max-w-2xl mb-6">
+              <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} variant="home" />
+            </div>
+
+            {/* Suggestion chips */}
+            <div className="flex flex-wrap gap-2 justify-center max-w-2xl">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s.label}
+                  onClick={() => sendMessage(s.prompt)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border/60 bg-card hover:bg-muted text-sm text-muted-foreground hover:text-foreground transition-all hover:shadow-sm"
+                >
+                  <s.icon className="h-4 w-4 text-primary/70" />
+                  {s.label}
+                </button>
               ))}
-              {isLoading && messages[messages.length - 1]?.role === "user" && (
-                <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <Brain className="w-4 h-4 text-primary-foreground animate-pulse" />
-                  </div>
-                  <div className="bg-muted rounded-2xl px-4 py-3">
-                    <div className="flex gap-1">
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+
+            <p className="text-[11px] text-muted-foreground/50 mt-8">
+              Responses are AI-generated. Verify important information.
+            </p>
+          </div>
+        ) : (
+          /* ===== CHAT VIEW ===== */
+          <>
+            <div className="flex-1 overflow-y-auto">
+              <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
+                {messages.map((msg, i) => (
+                  <ChatMessage key={i} message={msg} />
+                ))}
+                {isLoading && messages[messages.length - 1]?.role === "user" && (
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 text-primary-foreground animate-pulse" />
+                    </div>
+                    <div className="flex items-center gap-1 pt-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
+                )}
+                <div ref={messagesEndRef} />
+              </div>
             </div>
-          )}
-        </div>
-
-        <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} />
+            <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} />
+          </>
+        )}
       </div>
     </div>
   );

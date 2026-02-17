@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
+import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal, Menu } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
@@ -26,48 +26,58 @@ export default function ResearchAgent() {
     deleteConversation,
   } = useConversation();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true); // sidebar always visible
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isHome = messages.length === 0 && !activeConversationId;
 
-  useEffect(() => { loadConversations(); }, [loadConversations]);
+  useEffect(() => { 
+    loadConversations(); 
+  }, [loadConversations]);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <div className="h-screen flex bg-background font-sans">
-      
-      {/* Sidebar Always Visible */}
+    <div className="h-screen flex bg-background font-sans relative">
+
+      {/* Collapsible Sidebar */}
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
-        onSelect={loadMessages}
-        onNew={newChat}
+        onSelect={(id) => { loadMessages(id); setSidebarOpen(false); }}
+        onNew={() => { newChat(); setSidebarOpen(false); }}
         onDelete={deleteConversation}
         isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed z-30 left-0 top-0 h-full shadow-lg transition-transform transform"
       />
 
-      <div className={`flex-1 flex flex-col overflow-hidden h-screen ${sidebarOpen ? "md:ml-72" : ""}`}>
+      <div className="flex-1 flex flex-col overflow-hidden h-screen">
         
         {/* Top bar */}
         <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 sticky top-0 border-b">
-          {/* Adjusted spacing so text doesn't overlap sidebar */}
-          <span className="text-lg font-semibold text-foreground ml-2 md:ml-0">
-            Mindibly
-          </span>
+          <div className="flex items-center gap-3">
+            {/* Menu button only opens sidebar */}
+            <button 
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <span className="text-lg font-semibold text-foreground">
+              Mindibly
+            </span>
+          </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={newChat}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="New Chat"
             >
               <PenSquare className="h-5 w-5" />
             </button>
-            <button
-              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="More options"
-            >
+            <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
               <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>

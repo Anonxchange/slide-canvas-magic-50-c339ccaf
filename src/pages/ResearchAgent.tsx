@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Globe, TrendingUp, Lightbulb, Code } from "lucide-react";
+import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
@@ -48,14 +48,29 @@ export default function ResearchAgent() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-64" : ""}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-72" : ""}`}>
+        {/* Top bar */}
+        <div className="h-12 flex items-center justify-between px-4 pl-14">
+          <span className="text-sm font-semibold text-foreground">Mindibly</span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={newChat}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <PenSquare className="h-4 w-4" />
+            </button>
+            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
         {isHome ? (
-          /* ===== HOME SCREEN (ChatGPT-style) ===== */
+          /* ===== HOME SCREEN ===== */
           <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
-            {/* Logo / Brand */}
-            <div className="mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20">
-                <Sparkles className="w-7 h-7 text-primary-foreground" />
+            <div className="mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20">
+                <Sparkles className="w-6 h-6 text-primary-foreground" />
               </div>
             </div>
 
@@ -66,12 +81,10 @@ export default function ResearchAgent() {
               AI-powered research, analysis, and insights
             </p>
 
-            {/* Input bar */}
             <div className="w-full max-w-2xl mb-6">
               <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} variant="home" />
             </div>
 
-            {/* Suggestion chips */}
             <div className="flex flex-wrap gap-2 justify-center max-w-2xl">
               {SUGGESTIONS.map((s) => (
                 <button

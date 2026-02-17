@@ -53,7 +53,8 @@ export default function ResearchAgent() {
         
         {/* Top bar */}
         <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 sticky top-0 border-b">
-          <span className="text-lg font-semibold text-foreground">
+          {/* Adjusted spacing from sidebar */}
+          <span className="text-lg font-semibold text-foreground ml-6">
             Mindibly
           </span>
 

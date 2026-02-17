@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal,Copy, Check, Volume2, ThumbsUp, ThumbsDown, Share  } from "lucide-react";
+import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal, Copy, Check, Volume2, ThumbsUp, ThumbsDown, Share  } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";

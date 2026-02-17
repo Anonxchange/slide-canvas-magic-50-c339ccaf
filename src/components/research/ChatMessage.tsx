@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { User, Sparkles, Volume2, Copy, Star, Check } from "lucide-react";
+import { Copy, Check, Volume2, ThumbsUp, ThumbsDown, Share } from "lucide-react";
 import type { ChatMessage as ChatMessageType } from "@/lib/streamChat";
 
 export function ChatMessage({ message }: { message: ChatMessageType }) {
@@ -11,6 +11,24 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
     navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Placeholder handlers for other buttons
+  const handleSpeak = () => {
+    // Implement TTS or audio playback
+    console.log("Speak:", message.content);
+  };
+
+  const handleThumbsUp = () => {
+    console.log("Thumbs up!");
+  };
+
+  const handleThumbsDown = () => {
+    console.log("Thumbs down!");
+  };
+
+  const handleShare = () => {
+    console.log("Share:", message.content);
   };
 
   return (
@@ -27,14 +45,52 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
                 <ReactMarkdown>{message.content}</ReactMarkdown>
               </div>
             </div>
+
             {/* Action buttons */}
             <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Copy */}
               <button
                 onClick={handleCopy}
                 className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 title="Copy"
               >
                 {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              </button>
+
+              {/* Speaker */}
+              <button
+                onClick={handleSpeak}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Listen"
+              >
+                <Volume2 className="h-4 w-4" />
+              </button>
+
+              {/* Thumbs Up */}
+              <button
+                onClick={handleThumbsUp}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Like"
+              >
+                <ThumbsUp className="h-4 w-4" />
+              </button>
+
+              {/* Thumbs Down */}
+              <button
+                onClick={handleThumbsDown}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Dislike"
+              >
+                <ThumbsDown className="h-4 w-4" />
+              </button>
+
+              {/* Share */}
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Share"
+              >
+                <Share className="h-4 w-4" />
               </button>
             </div>
           </div>

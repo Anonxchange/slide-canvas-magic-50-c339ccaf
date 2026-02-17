@@ -30,7 +30,7 @@ export function ConversationSidebar({ conversations, activeId, onSelect, onNew, 
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full z-40 bg-card/95 backdrop-blur-md border-r border-border/50 flex flex-col transition-transform duration-300 ease-out w-72 ${
+        className={`fixed top-0 left-0 h-full z-40 bg-card border-r border-border flex flex-col transition-transform duration-300 ease-out w-72 shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -1,4 +1,4 @@
-Let’s fix it import { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";

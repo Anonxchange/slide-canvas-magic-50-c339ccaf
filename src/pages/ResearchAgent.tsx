@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
@@ -26,40 +26,37 @@ export default function ResearchAgent() {
     deleteConversation,
   } = useConversation();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isHome = messages.length === 0 && !activeConversationId;
 
-  useEffect(() => { loadConversations(); }, [loadConversations]);
+  useEffect(() => { 
+    loadConversations(); 
+  }, [loadConversations]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div className="h-screen flex flex-col bg-background relative font-sans">
+    <div className="h-screen flex bg-background font-sans">
+      
+      {/* Sidebar Always Visible */}
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
-        onSelect={(id) => { loadMessages(id); setSidebarOpen(false); }}
-        onNew={() => { newChat(); setSidebarOpen(false); }}
+        onSelect={(id) => loadMessages(id)}
+        onNew={newChat}
         onDelete={deleteConversation}
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-72" : ""} overflow-hidden h-screen`}>
+      <div className="flex-1 flex flex-col overflow-hidden h-screen">
+        
         {/* Top bar */}
-        <div className="h-14 flex items-center justify-between px-4 shrink-0 bg-background z-20 sticky top-0">
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-            <span className="text-lg font-semibold text-foreground">Mindibly</span>
-          </div>
+        <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 sticky top-0 border-b">
+          <span className="text-lg font-semibold text-foreground">
+            Mindibly
+          </span>
+
           <div className="flex items-center gap-2">
             <button
               onClick={newChat}
@@ -90,7 +87,12 @@ export default function ResearchAgent() {
             </p>
 
             <div className="w-full max-w-2xl mb-6">
-              <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} variant="home" />
+              <ChatInput 
+                onSend={sendMessage} 
+                onStop={stopGeneration} 
+                isLoading={isLoading} 
+                variant="home" 
+              />
             </div>
 
             <div className="flex flex-wrap gap-2 justify-center max-w-2xl">
@@ -120,6 +122,7 @@ export default function ResearchAgent() {
                     <ChatMessage message={msg} />
                   </div>
                 ))}
+
                 {isLoading && messages[messages.length - 1]?.role === "user" && (
                   <div className="flex items-center gap-1.5 pt-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -127,10 +130,16 @@ export default function ResearchAgent() {
                     <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 )}
+
                 <div ref={messagesEndRef} />
               </div>
             </div>
-            <ChatInput onSend={sendMessage} onStop={stopGeneration} isLoading={isLoading} />
+
+            <ChatInput 
+              onSend={sendMessage} 
+              onStop={stopGeneration} 
+              isLoading={isLoading} 
+            />
           </>
         )}
       </div>

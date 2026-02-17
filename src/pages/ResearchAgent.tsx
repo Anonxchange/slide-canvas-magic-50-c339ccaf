@@ -58,7 +58,7 @@ export default function ResearchAgent() {
             >
               <Menu className="h-6 w-6" />
             </button>
-            <span className="text-lg font-semibold text-foreground">ChatGPT</span>
+            <span className="text-lg font-semibold text-foreground">Mindibly</span>
           </div>
           <div className="flex items-center gap-2">
             <button

@@ -40,11 +40,11 @@ export function ChatInput({ onSend, onStop, isLoading, disabled, variant = "chat
     <div className={isHome ? "" : "border-t border-border/50 bg-background/80 backdrop-blur-sm p-4"}>
       <div className={`mx-auto flex items-end gap-2 ${isHome ? "max-w-2xl" : "max-w-3xl"}`}>
         {/* Plus button */}
-        <button className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0 mb-0.5">
+        <button className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-colors flex-shrink-0 mb-0.5">
           <Plus className="h-5 w-5" />
         </button>
 
-        <div className={`flex-1 relative rounded-2xl border border-border/60 bg-card shadow-sm ${isHome ? "shadow-md" : ""}`}>
+        <div className={`flex-1 relative rounded-2xl border border-border bg-card shadow-sm focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 transition-all ${isHome ? "shadow-md" : ""}`}>
           <textarea
             ref={textareaRef}
             value={input}
@@ -52,20 +52,20 @@ export function ChatInput({ onSend, onStop, isLoading, disabled, variant = "chat
             onKeyDown={handleKeyDown}
             placeholder="Ask anything"
             rows={1}
-            className={`w-full resize-none bg-transparent px-4 pr-24 text-sm focus:outline-none placeholder:text-muted-foreground/60 ${isHome ? "py-4" : "py-3"}`}
+            className={`w-full resize-none bg-transparent px-4 pr-28 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/50 ${isHome ? "py-4" : "py-3"}`}
             disabled={disabled}
             autoFocus={isHome}
           />
-          <div className="absolute right-2 bottom-2 flex items-center gap-1">
-            {/* Mic button */}
-            <button className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
+          <div className="absolute right-2 bottom-2 flex items-center gap-1.5">
+            {/* Mic button with glow */}
+            <button className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 active:shadow-[0_0_12px_hsl(224,76%,48%,0.4)] transition-all">
               <Mic className="h-4 w-4" />
             </button>
 
             {isLoading ? (
               <button
                 onClick={onStop}
-                className="w-8 h-8 rounded-xl bg-destructive text-destructive-foreground flex items-center justify-center hover:opacity-90 transition-opacity"
+                className="w-9 h-9 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:opacity-90 transition-opacity"
               >
                 <Square className="h-3.5 w-3.5" />
               </button>
@@ -73,13 +73,13 @@ export function ChatInput({ onSend, onStop, isLoading, disabled, variant = "chat
               <button
                 onClick={handleSubmit}
                 disabled={disabled}
-                className="w-8 h-8 rounded-xl bg-foreground text-background flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity"
+                className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center disabled:opacity-30 hover:bg-[hsl(224,76%,55%)] hover:scale-105 transition-all shadow-sm"
               >
                 <ArrowUp className="h-4 w-4" />
               </button>
             ) : (
               /* Voice/audio button when no text */
-              <button className="w-8 h-8 rounded-xl bg-foreground text-background flex items-center justify-center hover:opacity-80 transition-opacity">
+              <button className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-[hsl(224,76%,55%)] hover:scale-105 active:shadow-[0_0_12px_hsl(224,76%,48%,0.4)] transition-all shadow-sm">
                 <AudioLines className="h-4 w-4" />
               </button>
             )}

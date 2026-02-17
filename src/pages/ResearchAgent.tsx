@@ -37,7 +37,7 @@ export default function ResearchAgent() {
   }, [messages]);
 
   return (
-    <div className="h-screen flex flex-col bg-background relative">
+    <div className="h-screen flex flex-col bg-background relative font-sans">
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
@@ -69,12 +69,12 @@ export default function ResearchAgent() {
           /* ===== HOME SCREEN ===== */
           <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
             <div className="mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20">
-                <Sparkles className="w-6 h-6 text-primary-foreground" />
+              <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
+                <Sparkles className="w-7 h-7 text-primary-foreground" />
               </div>
             </div>
 
-            <h1 className="text-2xl font-semibold mb-1 text-foreground">
+            <h1 className="text-2xl font-bold mb-1 text-foreground">
               What can I help you research?
             </h1>
             <p className="text-muted-foreground text-sm mb-8">
@@ -90,7 +90,7 @@ export default function ResearchAgent() {
                 <button
                   key={s.label}
                   onClick={() => sendMessage(s.prompt)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border/60 bg-card hover:bg-muted text-sm text-muted-foreground hover:text-foreground transition-all hover:shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm"
                 >
                   <s.icon className="h-4 w-4 text-primary/70" />
                   {s.label}
@@ -112,10 +112,10 @@ export default function ResearchAgent() {
                 ))}
                 {isLoading && messages[messages.length - 1]?.role === "user" && (
                   <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-3.5 h-3.5 text-primary-foreground animate-pulse" />
-                    </div>
-                    <div className="flex items-center gap-1 pt-2">
+                     <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
+                       <Sparkles className="w-4 h-4 text-primary-foreground animate-pulse" />
+                     </div>
+                     <div className="flex items-center gap-1.5 pt-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
                       <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
                       <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />

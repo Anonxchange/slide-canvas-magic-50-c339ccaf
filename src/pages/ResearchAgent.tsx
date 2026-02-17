@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
+import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal, Menu } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
@@ -48,26 +48,34 @@ export default function ResearchAgent() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-72" : ""}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? "md:ml-72" : ""} overflow-hidden h-screen`}>
         {/* Top bar */}
-        <div className="h-12 flex items-center justify-between px-4 pl-14">
-          <span className="text-sm font-semibold text-foreground">Mindibly</span>
-          <div className="flex items-center gap-1">
+        <div className="h-14 flex items-center justify-between px-4 shrink-0 bg-background z-20 sticky top-0">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <span className="text-lg font-semibold text-foreground">ChatGPT</span>
+          </div>
+          <div className="flex items-center gap-2">
             <button
               onClick={newChat}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
-              <PenSquare className="h-4 w-4" />
+              <PenSquare className="h-5 w-5" />
             </button>
-            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-              <MoreHorizontal className="h-4 w-4" />
+            <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+              <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>
         </div>
 
         {isHome ? (
           /* ===== HOME SCREEN ===== */
-          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
+          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 overflow-y-auto min-h-0">
             <div className="mb-6">
               <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
                 <Sparkles className="w-7 h-7 text-primary-foreground" />
@@ -105,21 +113,18 @@ export default function ResearchAgent() {
         ) : (
           /* ===== CHAT VIEW ===== */
           <>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-0">
               <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
                 {messages.map((msg, i) => (
-                  <ChatMessage key={i} message={msg} />
+                  <div key={i} className="group">
+                    <ChatMessage message={msg} />
+                  </div>
                 ))}
                 {isLoading && messages[messages.length - 1]?.role === "user" && (
-                  <div className="flex gap-3">
-                     <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-sm">
-                       <Sparkles className="w-4 h-4 text-primary-foreground animate-pulse" />
-                     </div>
-                     <div className="flex items-center gap-1.5 pt-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                    </div>
+                  <div className="flex items-center gap-1.5 pt-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 )}
                 <div ref={messagesEndRef} />

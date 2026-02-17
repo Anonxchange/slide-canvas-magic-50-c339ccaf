@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
@@ -26,16 +26,13 @@ export default function ResearchAgent() {
     deleteConversation,
   } = useConversation();
 
+  const [sidebarOpen, setSidebarOpen] = useState(true); // sidebar always visible
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isHome = messages.length === 0 && !activeConversationId;
 
-  useEffect(() => { 
-    loadConversations(); 
-  }, [loadConversations]);
+  useEffect(() => { loadConversations(); }, [loadConversations]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   return (
     <div className="h-screen flex bg-background font-sans">
@@ -44,17 +41,18 @@ export default function ResearchAgent() {
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
-        onSelect={(id) => loadMessages(id)}
+        onSelect={loadMessages}
         onNew={newChat}
         onDelete={deleteConversation}
+        isOpen={sidebarOpen}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden h-screen">
+      <div className={`flex-1 flex flex-col overflow-hidden h-screen ${sidebarOpen ? "md:ml-72" : ""}`}>
         
         {/* Top bar */}
         <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 sticky top-0 border-b">
-          {/* Adjusted spacing from sidebar */}
-          <span className="text-lg font-semibold text-foreground ml-6">
+          {/* Adjusted spacing so text doesn't overlap sidebar */}
+          <span className="text-lg font-semibold text-foreground ml-2 md:ml-0">
             Mindibly
           </span>
 
@@ -62,10 +60,14 @@ export default function ResearchAgent() {
             <button
               onClick={newChat}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="New Chat"
             >
               <PenSquare className="h-5 w-5" />
             </button>
-            <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <button
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="More options"
+            >
               <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>

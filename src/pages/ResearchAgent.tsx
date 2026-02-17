@@ -3,6 +3,7 @@ import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
+import { Copy, Check, Volume2, ThumbsUp, ThumbsDown, Share } from "lucide-react";
 import { ChatInput } from "@/components/research/ChatInput";
 
 const SUGGESTIONS = [

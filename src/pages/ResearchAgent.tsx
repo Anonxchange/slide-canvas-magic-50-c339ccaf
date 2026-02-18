@@ -18,9 +18,11 @@ export default function ResearchAgent() {
     activeConversationId,
     messages,
     isLoading,
+    imageGenCount,
     loadConversations,
     loadMessages,
     sendMessage,
+    generateImage,
     stopGeneration,
     newChat,
     deleteConversation,
@@ -39,7 +41,7 @@ export default function ResearchAgent() {
   }, [messages]);
 
   return (
-    <div className="h-screen flex bg-background font-['Inter',sans-serif]">
+    <div className="h-screen flex bg-background">
       
       <ConversationSidebar
         conversations={conversations}
@@ -56,7 +58,7 @@ export default function ResearchAgent() {
         
         {/* Fixed header */}
         <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 border-b sticky top-0">
-          <span className="text-lg font-semibold text-foreground ml-10 md:ml-6 font-['Inter']">
+          <span className="text-lg font-semibold text-foreground ml-10 md:ml-6">
             Mindibly
           </span>
           <div className="flex items-center gap-2">
@@ -81,10 +83,10 @@ export default function ResearchAgent() {
               </div>
             </div>
 
-            <h1 className="text-2xl font-bold mb-1 text-foreground font-['Inter']">
+            <h1 className="text-2xl font-bold mb-1 text-foreground">
               What can I help you research?
             </h1>
-            <p className="text-muted-foreground text-sm mb-8 font-['Inter']">
+            <p className="text-muted-foreground text-sm mb-8">
               AI-powered research, analysis, and insights
             </p>
 
@@ -92,8 +94,10 @@ export default function ResearchAgent() {
               <ChatInput 
                 onSend={sendMessage} 
                 onStop={stopGeneration} 
+                onGenerateImage={generateImage}
                 isLoading={isLoading} 
                 variant="home" 
+                imageGenCount={imageGenCount}
               />
             </div>
 
@@ -102,7 +106,7 @@ export default function ResearchAgent() {
                 <button
                   key={s.label}
                   onClick={() => sendMessage(s.prompt)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm font-['Inter']"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm"
                 >
                   <s.icon className="h-4 w-4 text-primary/70" />
                   {s.label}
@@ -110,7 +114,7 @@ export default function ResearchAgent() {
               ))}
             </div>
 
-            <p className="text-[11px] text-muted-foreground/50 mt-8 font-['Inter']">
+            <p className="text-[11px] text-muted-foreground/50 mt-8">
               Responses are AI-generated. Verify important information.
             </p>
           </div>
@@ -142,7 +146,9 @@ export default function ResearchAgent() {
               <ChatInput 
                 onSend={sendMessage} 
                 onStop={stopGeneration} 
+                onGenerateImage={generateImage}
                 isLoading={isLoading} 
+                imageGenCount={imageGenCount}
               />
             </div>
           </>

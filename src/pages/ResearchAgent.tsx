@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
@@ -27,6 +27,7 @@ export default function ResearchAgent() {
   } = useConversation();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const isHome = messages.length === 0 && !activeConversationId;
 
   useEffect(() => { 
@@ -38,26 +39,26 @@ export default function ResearchAgent() {
   }, [messages]);
 
   return (
-    <div className="h-screen flex bg-background font-sans">
+    <div className="h-screen flex bg-background font-['Inter',sans-serif]">
       
-      {/* Sidebar Always Visible */}
       <ConversationSidebar
         conversations={conversations}
         activeId={activeConversationId}
         onSelect={(id) => loadMessages(id)}
         onNew={newChat}
         onDelete={deleteConversation}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden h-screen">
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col h-screen min-w-0">
         
-        {/* Top bar */}
-        <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 sticky top-0 border-b">
-          {/* Adjusted spacing from sidebar */}
-          <span className="text-lg font-semibold text-foreground ml-6">
+        {/* Fixed header */}
+        <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 border-b sticky top-0">
+          <span className="text-lg font-semibold text-foreground ml-10 md:ml-6 font-['Inter']">
             Mindibly
           </span>
-
           <div className="flex items-center gap-2">
             <button
               onClick={newChat}
@@ -80,10 +81,10 @@ export default function ResearchAgent() {
               </div>
             </div>
 
-            <h1 className="text-2xl font-bold mb-1 text-foreground">
+            <h1 className="text-2xl font-bold mb-1 text-foreground font-['Inter']">
               What can I help you research?
             </h1>
-            <p className="text-muted-foreground text-sm mb-8">
+            <p className="text-muted-foreground text-sm mb-8 font-['Inter']">
               AI-powered research, analysis, and insights
             </p>
 
@@ -101,7 +102,7 @@ export default function ResearchAgent() {
                 <button
                   key={s.label}
                   onClick={() => sendMessage(s.prompt)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm font-['Inter']"
                 >
                   <s.icon className="h-4 w-4 text-primary/70" />
                   {s.label}
@@ -109,7 +110,7 @@ export default function ResearchAgent() {
               ))}
             </div>
 
-            <p className="text-[11px] text-muted-foreground/50 mt-8">
+            <p className="text-[11px] text-muted-foreground/50 mt-8 font-['Inter']">
               Responses are AI-generated. Verify important information.
             </p>
           </div>
@@ -136,11 +137,14 @@ export default function ResearchAgent() {
               </div>
             </div>
 
-            <ChatInput 
-              onSend={sendMessage} 
-              onStop={stopGeneration} 
-              isLoading={isLoading} 
-            />
+            {/* Fixed bottom input */}
+            <div className="shrink-0">
+              <ChatInput 
+                onSend={sendMessage} 
+                onStop={stopGeneration} 
+                isLoading={isLoading} 
+              />
+            </div>
           </>
         )}
       </div>

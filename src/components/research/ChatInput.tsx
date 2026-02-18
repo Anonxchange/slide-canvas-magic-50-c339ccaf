@@ -50,14 +50,14 @@ export function ChatInput({ onSend, onStop, isLoading, disabled, variant = "chat
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask anything"
+            placeholder="Ask Mindibly anything..."
             rows={1}
-            className={`w-full resize-none bg-transparent px-4 pr-28 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/50 ${isHome ? "py-4" : "py-3"}`}
+            className={`w-full resize-none bg-transparent px-4 pr-28 text-[16px] text-foreground focus:outline-none placeholder:text-muted-foreground/50 font-['Inter'] ${isHome ? "py-4" : "py-3.5"}`}
             disabled={disabled}
             autoFocus={isHome}
           />
           <div className="absolute right-2 bottom-2 flex items-center gap-1.5">
-            {/* Mic button with glow */}
+            {/* Mic button */}
             <button className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 active:shadow-[0_0_12px_hsl(224,76%,48%,0.4)] transition-all">
               <Mic className="h-4 w-4" />
             </button>
@@ -78,7 +78,6 @@ export function ChatInput({ onSend, onStop, isLoading, disabled, variant = "chat
                 <ArrowUp className="h-4 w-4" />
               </button>
             ) : (
-              /* Voice/audio button when no text */
               <button className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-[hsl(224,76%,55%)] hover:scale-105 active:shadow-[0_0_12px_hsl(224,76%,48%,0.4)] transition-all shadow-sm">
                 <AudioLines className="h-4 w-4" />
               </button>

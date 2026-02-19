@@ -9,9 +9,10 @@ interface ChatInputProps {
   disabled?: boolean;
   variant?: "home" | "chat";
   imageGenCount?: number;
+  isGuest?: boolean;
 }
 
-export function ChatInput({ onSend, onStop, onGenerateImage, isLoading, disabled, variant = "chat", imageGenCount = 0 }: ChatInputProps) {
+export function ChatInput({ onSend, onStop, onGenerateImage, isLoading, disabled, variant = "chat", imageGenCount = 0, isGuest }: ChatInputProps) {
   const [input, setInput] = useState("");
   const [imageMode, setImageMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

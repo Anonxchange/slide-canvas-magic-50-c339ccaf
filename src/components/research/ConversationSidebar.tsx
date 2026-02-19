@@ -1,4 +1,6 @@
-import { Plus, MessageSquare, Trash2, PanelLeftClose, PanelLeft, FolderOpen, Blocks, User } from "lucide-react";
+import { Plus, MessageSquare, Trash2, PanelLeftClose, PanelLeft, FolderOpen, Blocks, User, LogIn } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Conversation } from "@/hooks/useConversation";
 
 interface ConversationSidebarProps {
@@ -9,6 +11,7 @@ interface ConversationSidebarProps {
   onDelete: (id: string) => void;
   isOpen: boolean;
   onToggle: () => void;
+  isGuest?: boolean;
 }
 
 const NAV_ITEMS = [
@@ -17,7 +20,7 @@ const NAV_ITEMS = [
   { icon: Blocks, label: "Artifacts" },
 ];
 
-export function ConversationSidebar({ conversations, activeId, onSelect, onNew, onDelete, isOpen, onToggle }: ConversationSidebarProps) {
+export function ConversationSidebar({ conversations, activeId, onSelect, onNew, onDelete, isOpen, onToggle, isGuest }: ConversationSidebarProps) {
   return (
     <>
       {/* Toggle button - always visible */}
@@ -142,12 +145,43 @@ function SidebarContent({ conversations, activeId, onSelect, onNew, onDelete }: 
       </div>
 
       {/* Bottom user area */}
-      <div className="border-t border-border/40 px-4 py-3 flex items-center gap-3 shrink-0">
-        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-          <User className="h-4 w-4 text-primary" />
-        </div>
-        <span className="text-sm text-muted-foreground truncate font-['Inter']">Guest User</span>
-      </div>
+      <BottomUserArea />
     </>
+  );
+}
+
+function BottomUserArea() {
+  const { user, isGuest, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  if (isGuest) {
+    return (
+      <div className="border-t border-border/40 px-4 py-3 shrink-0">
+        <button
+          onClick={() => navigate("/auth")}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary hover:bg-primary/5 transition-colors font-['Inter']"
+        >
+          <LogIn className="h-4 w-4" />
+          Sign in / Sign up
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-t border-border/40 px-4 py-3 flex items-center gap-3 shrink-0">
+      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+        <User className="h-4 w-4 text-primary" />
+      </div>
+      <span className="text-sm text-foreground truncate flex-1 font-['Inter']">
+        {user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User"}
+      </span>
+      <button
+        onClick={signOut}
+        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+      >
+        Sign out
+      </button>
+    </div>
   );
 }

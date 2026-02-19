@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Sparkles, Globe, TrendingUp, Lightbulb, Code, PenSquare, MoreHorizontal } from "lucide-react";
 import { useConversation } from "@/hooks/useConversation";
+import { useAuth } from "@/contexts/AuthContext";
 import { ConversationSidebar } from "@/components/research/ConversationSidebar";
 import { ChatMessage } from "@/components/research/ChatMessage";
 import { ChatInput } from "@/components/research/ChatInput";
+import { GuestBanner } from "@/components/research/GuestBanner";
 
 const SUGGESTIONS = [
   { icon: TrendingUp, label: "Market analysis", prompt: "Analyze the current state of the AI market in 2026 — key players, trends, and opportunities" },
@@ -13,6 +15,8 @@ const SUGGESTIONS = [
 ];
 
 export default function ResearchAgent() {
+  const { user, isGuest } = useAuth();
+
   const {
     conversations,
     activeConversationId,
@@ -26,7 +30,7 @@ export default function ResearchAgent() {
     stopGeneration,
     newChat,
     deleteConversation,
-  } = useConversation();
+  } = useConversation(user?.id ?? null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -51,9 +55,9 @@ export default function ResearchAgent() {
         onDelete={deleteConversation}
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
+        isGuest={isGuest}
       />
 
-      {/* Main content area */}
       <div className="flex-1 flex flex-col h-screen min-w-0">
         
         {/* Fixed header */}
@@ -75,9 +79,10 @@ export default function ResearchAgent() {
         </div>
 
         {isHome ? (
-          /* ===== HOME SCREEN ===== */
           <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 overflow-y-auto min-h-0">
-            <div className="mb-6">
+            {isGuest && <GuestBanner />}
+
+            <div className="mb-6 mt-4">
               <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
                 <Sparkles className="w-7 h-7 text-primary-foreground" />
               </div>
@@ -94,10 +99,11 @@ export default function ResearchAgent() {
               <ChatInput 
                 onSend={sendMessage} 
                 onStop={stopGeneration} 
-                onGenerateImage={generateImage}
+                onGenerateImage={isGuest ? undefined : generateImage}
                 isLoading={isLoading} 
                 variant="home" 
                 imageGenCount={imageGenCount}
+                isGuest={isGuest}
               />
             </div>
 
@@ -119,8 +125,8 @@ export default function ResearchAgent() {
             </p>
           </div>
         ) : (
-          /* ===== CHAT VIEW ===== */
           <>
+            {isGuest && <GuestBanner />}
             <div className="flex-1 overflow-y-auto min-h-0">
               <div className="max-w-3xl mx-auto py-6 px-4 space-y-6">
                 {messages.map((msg, i) => (
@@ -141,14 +147,14 @@ export default function ResearchAgent() {
               </div>
             </div>
 
-            {/* Fixed bottom input */}
             <div className="shrink-0">
               <ChatInput 
                 onSend={sendMessage} 
                 onStop={stopGeneration} 
-                onGenerateImage={generateImage}
+                onGenerateImage={isGuest ? undefined : generateImage}
                 isLoading={isLoading} 
                 imageGenCount={imageGenCount}
+                isGuest={isGuest}
               />
             </div>
           </>

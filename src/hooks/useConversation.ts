@@ -11,7 +11,7 @@ export interface Conversation {
 
 const IMAGE_GEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-image`;
 
-export function useConversation() {
+export function useConversation(userId: string | null) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -19,13 +19,16 @@ export function useConversation() {
   const [imageGenCount, setImageGenCount] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
 
+  const isGuest = !userId;
+
   const loadConversations = useCallback(async () => {
+    if (isGuest) { setConversations([]); return; }
     const { data } = await supabase
       .from("conversations")
       .select("id, title, created_at")
       .order("updated_at", { ascending: false });
     if (data) setConversations(data);
-  }, []);
+  }, [isGuest]);
 
   const loadMessages = useCallback(async (conversationId: string) => {
     const { data } = await supabase
@@ -35,7 +38,6 @@ export function useConversation() {
       .order("created_at", { ascending: true });
     if (data) {
       setMessages(data.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })));
-      // Count existing image generations
       const imgCount = data.filter(m => m.role === "assistant" && m.content.includes("[GENERATED_IMAGE]")).length;
       setImageGenCount(imgCount);
     }
@@ -43,9 +45,17 @@ export function useConversation() {
   }, []);
 
   const createConversation = useCallback(async (title: string) => {
+    if (isGuest) {
+      // Guest: use a local fake ID, no DB persistence
+      const fakeId = crypto.randomUUID();
+      setActiveConversationId(fakeId);
+      setMessages([]);
+      setImageGenCount(0);
+      return fakeId;
+    }
     const { data } = await supabase
       .from("conversations")
-      .insert({ title })
+      .insert({ title, user_id: userId })
       .select("id, title, created_at")
       .single();
     if (data) {
@@ -56,7 +66,7 @@ export function useConversation() {
       return data.id;
     }
     return null;
-  }, []);
+  }, [isGuest, userId]);
 
   const deleteConversation = useCallback(async (id: string) => {
     await supabase.from("conversations").delete().eq("id", id);
@@ -69,6 +79,10 @@ export function useConversation() {
   }, [activeConversationId]);
 
   const generateImage = useCallback(async (prompt: string) => {
+    if (isGuest) {
+      toast.error("Sign up to generate images");
+      return;
+    }
     if (imageGenCount >= 4) {
       toast.error("Image limit reached (4 per conversation). Start a new chat for more.");
       return;
@@ -85,7 +99,7 @@ export function useConversation() {
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
 
-    await supabase.from("messages").insert({ conversation_id: convId, role: "user", content: userMsg.content });
+    await supabase.from("messages").insert({ conversation_id: convId, role: "user", content: userMsg.content, user_id: userId });
 
     try {
       const resp = await fetch(IMAGE_GEN_URL, {
@@ -111,7 +125,7 @@ export function useConversation() {
       setMessages((prev) => [...prev, assistantMsg]);
       setImageGenCount((c) => c + 1);
 
-      await supabase.from("messages").insert({ conversation_id: convId, role: "assistant", content });
+      await supabase.from("messages").insert({ conversation_id: convId, role: "assistant", content, user_id: userId });
       await supabase.from("conversations").update({ updated_at: new Date().toISOString() }).eq("id", convId);
     } catch (e: any) {
       console.error(e);
@@ -119,7 +133,7 @@ export function useConversation() {
     } finally {
       setIsLoading(false);
     }
-  }, [activeConversationId, imageGenCount, createConversation]);
+  }, [activeConversationId, imageGenCount, createConversation, isGuest, userId]);
 
   const sendMessage = useCallback(async (input: string) => {
     let convId = activeConversationId;
@@ -134,7 +148,10 @@ export function useConversation() {
     setMessages(updatedMessages);
     setIsLoading(true);
 
-    await supabase.from("messages").insert({ conversation_id: convId, role: "user", content: input });
+    // Only persist to DB for logged-in users
+    if (!isGuest) {
+      await supabase.from("messages").insert({ conversation_id: convId, role: "user", content: input, user_id: userId });
+    }
 
     let assistantContent = "";
     const controller = new AbortController();
@@ -157,11 +174,12 @@ export function useConversation() {
         onDelta: upsertAssistant,
         onDone: async () => {
           setIsLoading(false);
-          if (assistantContent && convId) {
+          if (!isGuest && assistantContent && convId) {
             await supabase.from("messages").insert({
               conversation_id: convId,
               role: "assistant",
               content: assistantContent,
+              user_id: userId,
             });
             await supabase.from("conversations").update({ updated_at: new Date().toISOString() }).eq("id", convId);
           }
@@ -175,7 +193,7 @@ export function useConversation() {
       }
       setIsLoading(false);
     }
-  }, [activeConversationId, messages, createConversation]);
+  }, [activeConversationId, messages, createConversation, isGuest, userId]);
 
   const stopGeneration = useCallback(() => {
     abortRef.current?.abort();
@@ -194,6 +212,7 @@ export function useConversation() {
     messages,
     isLoading,
     imageGenCount,
+    isGuest,
     loadConversations,
     loadMessages,
     createConversation,

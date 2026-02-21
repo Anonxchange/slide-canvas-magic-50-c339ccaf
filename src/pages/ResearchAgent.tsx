@@ -33,7 +33,7 @@ export default function ResearchAgent() {
   } = useConversation(user?.id ?? null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
   const isHome = messages.length === 0 && !activeConversationId;
 
   useEffect(() => { 

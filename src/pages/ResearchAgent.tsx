@@ -33,8 +33,7 @@ export default function ResearchAgent() {
   } = useConversation(user?.id ?? null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isMobile = window.innerWidth < 768;
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isHome = messages.length === 0 && !activeConversationId;
 
   useEffect(() => { 
@@ -63,7 +62,7 @@ export default function ResearchAgent() {
         
         {/* Fixed header */}
         <div className="h-14 flex items-center justify-between px-6 shrink-0 bg-background z-20 border-b sticky top-0">
-          <span className="text-lg font-semibold text-foreground md:ml-6">
+          <span className="text-lg font-semibold text-foreground ml-10 md:ml-6">
             Mindibly
           </span>
           <div className="flex items-center gap-2">
@@ -108,12 +107,12 @@ export default function ResearchAgent() {
               />
             </div>
 
-            <div className="flex flex-nowrap gap-2 justify-center max-w-2xl overflow-x-auto pb-2">
+            <div className="flex flex-wrap gap-2 justify-center max-w-2xl">
               {SUGGESTIONS.map((s) => (
                 <button
                   key={s.label}
                   onClick={() => sendMessage(s.prompt)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm whitespace-nowrap"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border bg-card hover:bg-primary/5 hover:border-primary/30 text-sm text-muted-foreground hover:text-primary transition-all shadow-sm"
                 >
                   <s.icon className="h-4 w-4 text-primary/70" />
                   {s.label}

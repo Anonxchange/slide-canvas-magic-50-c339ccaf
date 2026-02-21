@@ -23,19 +23,18 @@ const NAV_ITEMS = [
 export function ConversationSidebar({ conversations, activeId, onSelect, onNew, onDelete, isOpen, onToggle, isGuest }: ConversationSidebarProps) {
   return (
     <>
-      {/* Toggle button - desktop only */}
+      {/* Toggle button - always visible */}
       <button
         onClick={onToggle}
-        className="fixed top-3 left-3 z-50 w-9 h-9 rounded-lg hidden md:flex items-center justify-center hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+        className="fixed top-3 left-3 z-50 w-9 h-9 rounded-lg flex items-center justify-center hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
       >
         {isOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeft className="h-5 w-5" />}
       </button>
 
-      {/* Desktop: sidebar as a flex column that pushes content. Mobile: overlay */}
+      {/* Desktop: sidebar pushes content */}
       <div
         className={`
           h-full bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300 ease-out
-          /* Desktop: inline, push content */
           hidden md:flex
           ${isOpen ? "w-72" : "w-0 overflow-hidden border-r-0"}
         `}
@@ -49,7 +48,27 @@ export function ConversationSidebar({ conversations, activeId, onSelect, onNew, 
         />
       </div>
 
-      {/* No mobile sidebar - mobile has no sidebar */}
+      {/* Mobile: overlay sidebar (closed by default, user clicks toggle to open) */}
+      <div
+        className={`
+          fixed top-0 left-0 h-full z-40 bg-card border-r border-border flex flex-col w-72 shadow-lg
+          md:hidden transition-transform duration-300 ease-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <SidebarContent
+          conversations={conversations}
+          activeId={activeId}
+          onSelect={onSelect}
+          onNew={onNew}
+          onDelete={onDelete}
+        />
+      </div>
+
+      {/* Mobile overlay backdrop */}
+      {isOpen && (
+        <div className="fixed inset-0 z-30 bg-black/20 md:hidden" onClick={onToggle} />
+      )}
     </>
   );
 }

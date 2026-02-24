@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ResearchAgent from "./pages/ResearchAgent";
 import Auth from "./pages/Auth";
+import Projects from "./pages/Projects";
+import Artifacts from "./pages/Artifacts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<ResearchAgent />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/artifacts" element={<Artifacts />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
